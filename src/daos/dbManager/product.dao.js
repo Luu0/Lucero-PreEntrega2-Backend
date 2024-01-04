@@ -2,15 +2,14 @@ import { query } from "express";
 import { postModel } from "../../models/product.model.js";
 
 class ProductDao {
-  async findProduct(limit=10, page =1, query, sort) {
-    let consulta={}
-    if(query!=undefined){
-      consulta[query.split(":")[0]]=query.split(":")[1]
+  async findProducts(limit = 10, page = 1, query, sort) {
+    let consult = {}
+
+    if (query != undefined){
+        consult[query.split(":")[0]] = query.split(":")[1]
     }
-    return await postModel.paginate(consulta,{limit:limit,page:page,sort:sort==undefined?{}:{price:Number(sort)}})
-    
-    
-   // return await postModel.find();
+
+    return await postModel.paginate(consult,{limit:limit,page:page,sort:sort == undefined ? {}: {price:Number(sort)}})
   }
 
   async createProduct(post) {

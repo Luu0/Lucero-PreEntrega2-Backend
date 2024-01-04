@@ -4,7 +4,6 @@ import productDao from "../daos/dbManager/product.dao.js";
 
 const router = Router();
 
-
 router.get("/", async (req, res) => {
   try{
     const Carts = await cartDao.findCart();
@@ -94,7 +93,6 @@ router.put('/:cid', async (req, res) => {
 });
 
 
-
 router.put('/:cid/product/:pid', async (req, res) => {
   try {
     let cart = await cartDao.findById(req.params.cid);
@@ -130,32 +128,16 @@ router.delete('/:cid', async (req,res)=>{
   
 })
 
-router.delete('/:cid/product/:pid', async (req, res) => {
+router.delete("/:cid/product/:pid", async (req, res) => {
+  const { cid, pid } = req.params;
   try {
-    let cart = await cartDao.findById(req.params.cid);
-
-    if (!cart) {
-      return res.status(404).json({ error: "Cart not found" });
-    }
-
-    // Encuentra el índice del producto dentro del carrito
-    const productIndex = cart.products.findIndex((e) => e.product && e.product._id && e.product._id.toString() === req.params.pid);
-
-    // Verifica si el producto existe en el carrito
-    if (productIndex !== -1) {
-      // Elimina el producto específico del carrito
-      cart.products.splice(productIndex, 1);
-
-      // Actualiza el carrito con el producto eliminado
-      const updatedCart = await cartDao.updateProducts(req.params.cid, cart);
-
-      return res.status(200).json(updatedCart);
-    } else {
-      return res.status(404).json({ error: "Product not found in Cart" });
-    }
+    const result = await cartDao.deleteProductFromCart(cid, pid);
+    res.json({
+      result,
+      message: "Product deleted"
+  });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message || "Internal server error" });
+    res.status(500).json({ error: error.message });
   }
 });
 

@@ -3,16 +3,23 @@ import productDao from "../daos/dbManager/product.dao.js";
 
 const router = Router();
 
-router.get('/',async (req,res)=>{
-  try{
-      const { limit,page,query,sort } = req.query
-      const productos = await productDao.findProduct(limit, page, query, sort);
-      res.json(productos) 
-    }
-  catch(err){
-      res.status(500).json({error:err})
+router.get("/", async (req, res) => {
+  try {
+      const { limit, page, query, sort } = req.query;
+      const products = await productDao.findProducts(limit, page, query, sort);
+      res.json({
+          data: products,
+          message: "Product list"
+      })
   }
-})
+  catch (error) {
+      console.log(error);
+      res.json({
+          error,
+          message: "error"
+      });
+  }
+});
 
 
 router.get("/:id",(req,res)=>{
